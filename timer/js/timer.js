@@ -23,15 +23,49 @@ var ClockViewController = {
 };
 
 // Controlls behaviour that responds to events
-var panelViewController = {
+var PanelViewController = {
 
 	startBtn: null,
 	resetBtn: null,
 	loopSwitch: null,
 	delegate: null,
 
-	init: function() {},
-	bindEvents: function() {}
+	init: function(elem) {
+		this.$elem = $(elem);
+		this.$startBtn = this.$elem.find('#start');
+		this.$resetBtn = this.$elem.find('#reset');
+		this.$loopSwitch = this.$elem.find('#loop');
+		this.resetButtons();
+		this.bindEvents();
+	},
+
+	bindEvents: function() {
+
+		var self = this,
+			$startBtnLabel = this.$startBtn.find('.ui-btn-text');
+
+		this.$startBtn.on('click', function() {
+			switch ( $startBtnLabel.text() ) {
+				case 'Pause':
+					$startBtnLabel.text('Start');
+					self.delegate.panelViewControllerDidClickPause();
+					break;
+				// set start as the default behaviour
+				case 'Start':
+				default:
+					$startBtnLabel.text('Pause');
+					self.delegate.panelViewControllerDidClickStart();
+					break;
+			}
+		});
+
+		this.$resetBtn.on('click', self.delegate.panelViewControllerDidClickReset);
+	},
+
+	resetButtons: function() {
+		this.$startBtn.find('.ui-btn-text').text('Start');
+		this.$resetBtn.find('.ui-btn-text').text('Reset');
+	}
 };
 
 // Object for plugin to initiate
@@ -47,7 +81,7 @@ var TimerAppController = {
 	panelViewControllerDidClickPause: function() {},
 	panelViewControllerDidClickReset: function() {},
 	panelViewControllerDidToogleLoop: function() {},
-	ClockViewControllerDidReachEndOfCounting: function() {}
+	clockViewControllerDidReachEndOfCounting: function() {}
 };
 
 var count = 0;
@@ -80,6 +114,8 @@ var Timer = {
 		self.startBtn = self.$elem.find('#start');
 		self.resetBtn = self.$elem.find('#reset');
 		self.loopSwitch = self.$elem.find('#loop');
+		this.startBtn.find('.ui-btn-text').text('Start');
+		this.resetBtn.find('.ui-btn-text').text('Reset');
 		self.opt.loop = (self.loopSwitch.val() === 'on') ? true : false;
 
 		self.bindEvents();
