@@ -6,6 +6,50 @@
 
 (function($, window, document, undefined) {
 
+// Controlls digits counting down
+var ClockViewController = {
+
+	timeLabel: null,
+	time: null,
+	isPaused: null,
+	delegate: null,
+
+	init: function() {},
+	start: function() {},
+	pause: function() {},
+	reset: function() {},
+
+	countDown: function() {}
+};
+
+// Controlls behaviour that responds to events
+var panelViewController = {
+
+	startBtn: null,
+	resetBtn: null,
+	loopSwitch: null,
+	delegate: null,
+
+	init: function() {},
+	bindEvents: function() {}
+};
+
+// Object for plugin to initiate
+var TimerAppController = {
+
+	clockViewControllers: [],
+	currentClockViewController: null,
+	panelViewController: null,
+	shouldLoop: false,
+
+	init: function() {},
+	panelViewControllerDidClickStart: function() {},
+	panelViewControllerDidClickPause: function() {},
+	panelViewControllerDidClickReset: function() {},
+	panelViewControllerDidToogleLoop: function() {},
+	ClockViewControllerDidReachEndOfCounting: function() {}
+};
+
 var count = 0;
 
 // PUBLIC CLASS DEFINITION
