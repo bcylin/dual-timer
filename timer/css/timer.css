@@ -13,12 +13,12 @@ body {
 	text-align: center;
 }
 
-#clock {
+.clock {
 	width: 60%;
 	margin: 0.5em auto;
-	padding: 0;
+	padding: 0 !important;
 	text-align: center;
-	font-size: 5em;
+	font-size: 5em !important;
 	background: transparent;
 	border: none;
 	-webkit-box-shadow: none;

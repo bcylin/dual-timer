@@ -14,28 +14,32 @@ var ClockViewController = {
 	delegate: null,
 
 	isPaused: true,
-	queue: 0;
+	queue: 0,
 
 	// default
 	config: {
 		decimal: 1,
 		startTime: 10,	// in seconds
-		interval: 100,	// in milliseconds
+		interval: 100	// in milliseconds
 	},
 
 	init: function(elem, options) {
 		var defaults = this.config;
 		this.config = $.extend(defaults, options);
+
+		// calculate decimal points needed for time interval
+		var timeFraction = (this.config.interval < 1000) ? 1000 / this.config.interval : 1;
+		this.config.decimal = Math.round( Math.log(timeFraction) / Math.LN10 );
+
 		this.$clock = $(elem);
 		this.time = this.config.startTime;
+		this.syncClock();
 	},
 
 	start: function() {
 		this.isPaused = false;
 		if (this.queue <= 0) {
 			this.countDown();
-		} else {
-			setTimeout(this.countDown, this.config.interval);
 		}
 	},
 
@@ -50,6 +54,7 @@ var ClockViewController = {
 	},
 
 	countDown: function () {
+
 		this.syncClock();
 
 		// reach the end of counting
@@ -71,7 +76,9 @@ var ClockViewController = {
 	},
 
 	syncClock: function() {
-		this.$clock.val(this.time.toFixed(self.config.decimal));
+		// keep a specified number of decimals
+		this.time = parseFloat(this.time).toFixed(this.config.decimal);
+		this.$clock.val(this.time);
 	}
 };
 
@@ -112,7 +119,13 @@ var PanelViewController = {
 			}
 		});
 
-		this.$resetBtn.on('click', self.delegate.panelViewControllerDidClickReset);
+		this.$resetBtn.on('click', function() {
+			self.delegate.panelViewControllerDidClickReset();
+		});
+
+		this.$loopSwitch.on('change', function() {
+			self.delegate.panelViewControllerDidSwitchLoop( $(this).val() === 'on' );
+		});
 	},
 
 	resetButtons: function() {
@@ -121,7 +134,7 @@ var PanelViewController = {
 	}
 };
 
-// Object for plugin to initiate
+// Object that handles all functions
 var TimerAppController = {
 
 	clockViewControllers: [],
@@ -129,13 +142,66 @@ var TimerAppController = {
 	panelViewController: null,
 	shouldLoop: false,
 
-	init: function() {},
-	panelViewControllerDidClickStart: function() {},
-	panelViewControllerDidClickPause: function() {},
-	panelViewControllerDidClickReset: function() {},
-	panelViewControllerDidToogleLoop: function() {},
-	clockViewControllerDidReachEndOfCounting: function() {}
+	init: function(elem, options) {
+		this.$elem = $(elem);
+
+		// initiate clock view controllers
+		var self = this;
+		this.$elem.find('.clock').each(function(index, element) {
+			var clockVC = Object.create( ClockViewController );
+			clockVC.init(element, options);
+			clockVC.delegate = self;
+			self.clockViewControllers.push(clockVC);
+		});
+		this.currentClockViewController = this.clockViewControllers[0];
+
+		// initiate panel view controller
+		this.panelViewController = Object.create( PanelViewController );
+		this.panelViewController.init( elem );
+		this.panelViewController.delegate = this;
+	},
+
+	resetAllClockViewControllers: function() {
+		this.clockViewControllers.forEach(function(controller, index, array) {
+			controller.reset();
+		});
+	},
+
+	panelViewControllerDidClickStart: function() {
+		this.currentClockViewController.start();
+	},
+
+	panelViewControllerDidClickPause: function() {
+		this.currentClockViewController.pause();
+	},
+
+	panelViewControllerDidClickReset: function() {
+		this.resetAllClockViewControllers();
+		this.panelViewController.resetButtons();
+	},
+
+	panelViewControllerDidSwitchLoop: function(switched) {
+		this.shouldLoop = switched;
+	},
+
+	clockViewControllerDidReachEndOfCounting: function() {
+		var index = this.clockViewControllers.indexOf( this.currentClockViewController );
+		if (index < this.clockViewControllers.length - 1) {
+			// go to the next clock
+			currentClockViewController = this.clockViewControllers[index + 1];
+		} else if (this.shouldLoop) {
+			// go back to the first clock and keep running
+			this.resetAllClockViewControllers();
+			currentClockViewController = this.clockViewControllers[0];
+			currentClockViewController.start();
+		} else {
+			// end
+			this.panelViewController.resetButtons();
+		}
+	}
 };
+
+window.TimerAppController = TimerAppController;
 
 var count = 0;
 

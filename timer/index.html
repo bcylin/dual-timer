@@ -15,7 +15,7 @@
 	<h1>Count Down Timer</h1>
 </div>
 <div id="timer">
-	<input type="text" id="clock">
+	<input type="text" class="clock">
 	<div class="text">LOOP </div>
 	<select name="slider" id="loop" data-role="slider">
 		<option value="off">Off</option>
@@ -35,7 +35,13 @@
 // <![CDATA[
 
 $(document).ready(function() {
-	$('#timer').countDownTimer();
+	// $('#timer').countDownTimer();
+	var timerAppController = Object.create( window.TimerAppController );
+	timerAppController.init( $('#timer'), {
+		decimal: 1,
+		startTime: 10,	// in seconds
+		interval: 100	// in milliseconds
+	});
 });
 
 // ]]>
