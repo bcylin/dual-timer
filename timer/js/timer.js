@@ -9,17 +9,70 @@
 // Controlls digits counting down
 var ClockViewController = {
 
-	timeLabel: null,
+	$clock: null,
 	time: null,
-	isPaused: null,
 	delegate: null,
 
-	init: function() {},
-	start: function() {},
-	pause: function() {},
-	reset: function() {},
+	isPaused: true,
+	queue: 0;
 
-	countDown: function() {}
+	// default
+	config: {
+		decimal: 1,
+		startTime: 10,	// in seconds
+		interval: 100,	// in milliseconds
+	},
+
+	init: function(elem, options) {
+		var defaults = this.config;
+		this.config = $.extend(defaults, options);
+		this.$clock = $(elem);
+		this.time = this.config.startTime;
+	},
+
+	start: function() {
+		this.isPaused = false;
+		if (this.queue <= 0) {
+			this.countDown();
+		} else {
+			setTimeout(this.countDown, this.config.interval);
+		}
+	},
+
+	pause: function() {
+		this.isPaused = true;
+	},
+
+	reset: function() {
+		this.isPaused = true;
+		this.time = this.config.startTime;
+		this.syncClock();
+	},
+
+	countDown: function () {
+		this.syncClock();
+
+		// reach the end of counting
+		if (this.time <= 0) {
+			this.delegate.clockViewControllerDidReachEndOfCounting();
+			return;
+		}
+
+		var self = this;
+		self.queue += 1;
+		setTimeout(function() {
+			self.queue -= 1;
+			// check running status
+			if (self.isPaused) { return; }
+			// count down
+			self.time -= self.config.interval / 1000;
+			self.countDown();
+		}, this.config.interval);
+	},
+
+	syncClock: function() {
+		this.$clock.val(this.time.toFixed(self.config.decimal));
+	}
 };
 
 // Controlls behaviour that responds to events
