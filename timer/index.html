@@ -23,6 +23,7 @@
 </div>
 <div id="timer">
 	<input type="text" class="clock">
+	<input type="text" class="clock">
 	<div class="text">LOOP </div>
 	<select name="slider" id="loop" data-role="slider">
 		<option value="off">Off</option>
@@ -43,11 +44,15 @@
 
 $(document).ready(function() {
 	var timerAppController = Object.create( window.TimerAppController );
-	timerAppController.init( $('#timer'), {
+	timerAppController.init( $('#timer'), [{
 		decimal: 1,
-		startTime: 10,	// in seconds
+		startTime: 20,	// in seconds
 		interval: 100	// in milliseconds
-	});
+	}, {
+		decimal: 1,
+		startTime: 10,
+		interval: 100
+	}]);
 });
 
 // ]]>

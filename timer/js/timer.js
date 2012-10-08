@@ -27,7 +27,7 @@ var ClockViewController = {
 
 	init: function(elem, options) {
 		var defaults = this.config;
-		this.config = $.extend(defaults, options);
+		this.config = $.extend({}, defaults, options);
 
 		// calculate decimal points needed for time interval
 		var timeFraction = (this.config.interval < 1000) ? 1000 / this.config.interval : 1;
@@ -147,11 +147,15 @@ var TimerAppController = {
 	init: function(elem, options) {
 		this.$elem = $(elem);
 
+		if ( !$.isArray(options) ) {
+			options = $.makeArray(options);
+		}
+
 		// initiate clock view controllers
 		var self = this;
 		this.$elem.find('.clock').each(function(index, element) {
 			var clockVC = Object.create( ClockViewController );
-			clockVC.init(element, options);
+			clockVC.init(element, options[index]);
 			clockVC.delegate = self;
 			self.clockViewControllers.push(clockVC);
 		});
@@ -190,12 +194,13 @@ var TimerAppController = {
 		var index = this.clockViewControllers.indexOf( this.currentClockViewController );
 		if (index < this.clockViewControllers.length - 1) {
 			// go to the next clock
-			currentClockViewController = this.clockViewControllers[index + 1];
+			this.currentClockViewController = this.clockViewControllers[index + 1];
+			this.currentClockViewController.start();
 		} else if (this.shouldLoop) {
 			// go back to the first clock and keep running
 			this.resetAllClockViewControllers();
-			currentClockViewController = this.clockViewControllers[0];
-			currentClockViewController.start();
+			this.currentClockViewController = this.clockViewControllers[0];
+			this.currentClockViewController.start();
 		} else {
 			// reach the end
 			this.panelViewController.resetButtons();
