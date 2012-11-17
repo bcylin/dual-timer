@@ -11,9 +11,9 @@
 // Controlls digits counting down
 var ClockViewController = {
 
-	$clock: null,
-	time: null,
-	delegate: null,
+	$clock: undefined,
+	time: undefined,
+	delegate: undefined,
 
 	isPaused: true,
 	isReset: true,
@@ -83,6 +83,9 @@ var ClockViewController = {
 		var self = this;
 
 		this.$clock.on('focus', function() {
+			// https://developer.mozilla.org/en-US/docs/DOM/Input.select
+			// for mobile Safari
+			this.setSelectionRange(0, 9999);
 			$(this).on('change', function() {
 				if (self.isReset) {
 					self.setStartTime();
@@ -90,6 +93,8 @@ var ClockViewController = {
 					self.syncTimeClock();
 				}
 			});
+		}).mouseup(function(event) {
+			event.preventDefault();
 		});
 
 		this.$clock.on('blur', function() {
@@ -116,10 +121,10 @@ var ClockViewController = {
 // Controlls behaviour responding to events
 var PanelViewController = {
 
-	startBtn: null,
-	resetBtn: null,
-	loopSwitch: null,
-	delegate: null,
+	startBtn: undefined,
+	resetBtn: undefined,
+	loopSwitch: undefined,
+	delegate: undefined,
 
 	init: function(elem) {
 		this.$elem = $(elem);
@@ -169,8 +174,8 @@ var PanelViewController = {
 var TimerAppController = {
 
 	clockViewControllers: [],
-	currentClockViewController: null,
-	panelViewController: null,
+	currentClockViewController: undefined,
+	panelViewController: undefined,
 	shouldLoop: false,
 
 	init: function(elem, options) {
