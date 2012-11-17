@@ -197,9 +197,10 @@ var TimerAppController = {
 	},
 
 	resetAllClockViewControllers: function() {
-		this.clockViewControllers.forEach(function(controller, index, array) {
-			controller.reset();
-		});
+		var i, len = this.clockViewControllers.length;
+		for (i = 0; i < len; i ++) {
+			this.clockViewControllers[i].reset();
+		}
 	},
 
 	panelViewControllerDidClickStart: function() {
@@ -211,6 +212,7 @@ var TimerAppController = {
 	},
 
 	panelViewControllerDidClickReset: function() {
+		this.currentClockViewController = this.clockViewControllers[0];
 		this.resetAllClockViewControllers();
 		this.panelViewController.resetButtons();
 	},
