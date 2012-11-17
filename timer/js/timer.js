@@ -16,10 +16,10 @@ var ClockViewController = {
 	delegate: null,
 
 	isPaused: true,
-	queue: 0,
+	isReset: true,
+	queue: 0,			// queue of count down process
 
-	// default setting
-	config: {
+	config: {			// default settings
 		decimal: 1,
 		startTime: 10,	// in seconds
 		interval: 100	// in milliseconds
@@ -29,17 +29,18 @@ var ClockViewController = {
 		var defaults = this.config;
 		this.config = $.extend({}, defaults, options);
 
-		// calculate decimal points needed for time interval
+		// calculate number of digits in fractional part needed for time interval
 		var timeFraction = (this.config.interval < 1000) ? 1000 / this.config.interval : 1;
 		this.config.decimal = Math.round( Math.log(timeFraction) / Math.LN10 );
 
 		this.$clock = $(elem);
-		this.time = this.config.startTime;
-		this.syncClock();
+		this.setStartTime();
+		this.bindEvents();
 	},
 
 	start: function() {
 		this.isPaused = false;
+		this.isReset = false;
 		if (this.queue <= 0) {
 			this.countDown();
 		}
@@ -51,13 +52,14 @@ var ClockViewController = {
 
 	reset: function() {
 		this.isPaused = true;
+		this.isReset = true;
 		this.time = this.config.startTime;
-		this.syncClock();
+		this.syncTimeClock();
 	},
 
 	countDown: function () {
 
-		this.syncClock();
+		this.syncTimeClock();
 
 		// reach the end of counting
 		if (this.time <= 0) {
@@ -69,18 +71,45 @@ var ClockViewController = {
 		self.queue += 1;
 		setTimeout(function() {
 			self.queue -= 1;
-			// check running status
-			if (self.isPaused) { return; }
-			// count down
+			if (self.isPaused) {
+				return;	// check running status
+			}
 			self.time -= self.config.interval / 1000;
 			self.countDown();
 		}, this.config.interval);
 	},
 
-	syncClock: function() {
-		// keep a specified number of decimals
+	bindEvents: function() {
+		var self = this;
+
+		this.$clock.on('focus', function() {
+			$(this).on('change', function() {
+				if (self.isReset) {
+					self.setStartTime();
+				} else {
+					self.syncTimeClock();
+				}
+			});
+		});
+
+		this.$clock.on('blur', function() {
+			$(this).off('change');
+		});
+	},
+
+	syncTimeClock: function() {
+		// keep this time as a fixed digit number
 		this.time = parseFloat(this.time).toFixed(this.config.decimal);
-		this.$clock.val(this.time);
+		this.$clock.val( this.time );
+	},
+
+	setStartTime: function() {
+		// sync time between model and view
+		var time = parseFloat(this.$clock.val());
+		this.time = (!isNaN(time) && time > 0) ? time : this.config.startTime;
+		this.syncTimeClock();
+
+		this.config.startTime = this.time;
 	}
 };
 
