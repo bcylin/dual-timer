@@ -1,6 +1,6 @@
 /**
-  * TimerApp
-  * https://github.com/bcylin/tools
+  * timer.js
+  * https://github.com/bcylin/dual-timer
   *
   * Created by Ben on 28/Sep/2012
   * Licensed under the MIT License | http://opensource.org/licenses/MIT
