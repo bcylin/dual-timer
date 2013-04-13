@@ -1,0 +1,8 @@
+body{margin:0;padding:0;}
+.ui-header .ui-title{font-size:18px;}
+#timer{width:320px;margin:0 auto;text-align:center;}
+.clock{width:60%;margin:10px auto !important;padding:0 !important;text-align:center;font-size:5em !important;line-height:100px !important;background:transparent;border:none;-webkit-box-shadow:none;box-shadow:none;}
+.text{height:32px;-webkit-box-sizing:border-box;-moz-box-sizing:border-box;-ms-box-sizing:border-box;box-sizing:border-box;display:inline-block;font-size:1.5em;margin:0 2% 0 20px;padding:0.3em 0;}
+.buttons{margin-top:1em;}
+.buttons .ui-btn-inner{width:3em;}
+@media screen and (max-device-width:480px){body{width:device-width;} .ui-header .ui-title{margin:0.8em 20%;} #timer{width:device-width;margin:0;padding:0;}}
