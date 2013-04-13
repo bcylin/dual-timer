@@ -1,0 +1,60 @@
+<!--
+	timer/index.html
+	https://github.com/bcylin/dual-timer
+
+	Created by Ben on 28/Sep/2012
+	Licensed under the MIT License | http://opensource.org/licenses/MIT
+-->
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, height=device-height" />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+	<title></title>
+	<link rel="stylesheet" href="css/jquery.mobile.min.css">
+	<link rel="stylesheet" href="css/timer.css">
+</head>
+<body data-role="page" data-theme="a">
+
+<div data-role="header">
+	<h1>Count Down Timer</h1>
+</div>
+<div id="timer">
+	<input type="tel" class="clock">
+	<input type="tel" class="clock">
+	<div class="text">LOOP </div>
+	<select name="slider" id="loop" data-role="slider">
+		<option value="off">Off</option>
+		<option value="on">On</option>
+	</select>
+	<div class="buttons">
+		<a href="#" id="start" data-role="button" data-inline="true"></a>
+		<a href="#" id="reset" data-role="button" data-inline="true"></a>
+	</div>
+</div>
+
+</body>
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="js/jquery.mobile.min.js"></script>
+<script type="text/javascript" src="js/timer.js"></script>
+<script type="text/javascript">
+// <![CDATA[
+
+$(document).ready(function() {
+	var timerAppController = Object.create( window.TimerAppController );
+	timerAppController.init( $('#timer'), [{
+		decimal: 1,
+		startTime: 20,	// in seconds
+		interval: 100	// in milliseconds
+	}, {
+		decimal: 1,
+		startTime: 10,
+		interval: 100
+	}]);
+});
+
+// ]]>
+</script>
+</html>
