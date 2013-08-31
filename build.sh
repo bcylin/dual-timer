@@ -3,6 +3,10 @@
 readonly DEPLOY="deploy"
 readonly BRANCH="gh-pages"
 
+echo "\n\033[31mStash uncommitted changes\033[0m"
+git stash save "Build process"
+echo ""
+
 if [ ! -d "./${DEPLOY}" ]; then
     mkdir "./${DEPLOY}"
 fi
